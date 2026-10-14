@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>Contact Sensing with Elastic Beams · Siyue Yao</title>
+  <meta name="description" content="A curved carbon-fiber beam with eight strain gauges senses where, and how hard, it is touched. A model of the beam turns the readings into contact positions and forces, and on a mobile robot the beam works as both an executor and a sensor.">
+  <meta name="citation_title" content="Contact sensing methodology based on propagation of interaction-induced deformation in elastic beams">
+  <meta name="citation_author" content="Genliang Chen">
+  <meta name="citation_author" content="Junjie Luo">
+  <meta name="citation_author" content="Siyue Yao">
+  <meta name="citation_author" content="Hao Yuan">
+  <meta name="citation_author" content="Yanjun Wang">
+  <meta name="citation_author" content="Tao Yu">
+  <meta name="citation_author" content="Hao Wang">
+  <meta name="citation_author" content="Zhongqin Lin">
+  <meta name="citation_publication_date" content="2026/02/04">
+  <meta name="citation_journal_title" content="The International Journal of Robotics Research">
+  <meta name="citation_publisher" content="SAGE Publications">
+  <meta name="citation_doi" content="10.1177/02783649261419836">
+  <meta property="og:title" content="Contact Sensing with Elastic Beams">
+  <meta property="og:description" content="A curved carbon-fiber beam with eight strain gauges that feels where, and how hard, it is touched.">
+  <meta property="og:image" content="https://elastic-beam-sensing.github.io/hero.jpg">
+  <meta property="og:url" content="https://elastic-beam-sensing.github.io/">
+  <link rel="canonical" href="https://elastic-beam-sensing.github.io/">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131312'/%3E%3Ctext x='32' y='44' text-anchor='middle' fill='%23ebe8e1' font-family='Georgia' font-size='36'%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@1,6..72,400&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@1,6..72,400&display=swap"></noscript>
+  <style>
+/* Shared styles for Siyue Yao's project pages.
+   Distilled from the Compliant Wrist, Fluorescent Whisker, FBG Whisker and UMI-Underwater pages:
+   a black opening, light reading sections, and Newsreader italics as the serif accent.
+   Each page sets --accent and --accent-hero on <body>. */
+:root {
+  --ink: #242523;
+  --muted: #6d7069;
+  --line: #e3e5df;
+  --wash: #f7f8f5;
+  --accent: #80611e;
+  --accent-hero: #efc985;
+  --max: 1040px;
+  --read: 800px;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: #fff; color: var(--ink); font: 17px/1.75 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-underline-offset: 4px; text-decoration-color: #b4b8ac; }
+a:hover { color: var(--accent); }
+button { font: inherit; cursor: pointer; }
+a, button, summary { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, summary:focus-visible, pre:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+img, video { display: block; max-width: 100%; height: auto; }
+video { width: 100%; background: #090b08; }
+h1, h2, h3, h4, p, figure { margin: 0; }
+h1, h2, h3, h4 { line-height: 1.2; letter-spacing: -0.035em; }
+p + p { margin-top: 18px; }
+sup { font-size: 0.65em; line-height: 0; vertical-align: super; }
+strong { font-weight: 600; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; top: -80px; left: 20px; z-index: 40; padding: 8px 15px; background: #fff; color: var(--ink); }
+.skip:focus { top: 10px; }
+
+/* ---------- Opening (both styles) ---------- */
+.hero { position: relative; background: #000; color: #f4f4f1; }
+.hero-nav { position: absolute; inset: 0 0 auto; z-index: 3; display: flex; justify-content: flex-end; gap: 20px; padding: 22px 5vw; font-size: 13px; line-height: 24px; }
+.hero-nav a { color: #efefed; text-decoration: none; }
+.hero-nav a:hover { color: var(--accent-hero); }
+.eyebrow { margin-bottom: 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: var(--accent); }
+.hero .eyebrow { color: var(--accent-hero); }
+.hero h1 { font-weight: 600; letter-spacing: -0.045em; text-wrap: balance; }
+.title-main { display: block; font-size: clamp(40px, 4.4vw, 72px); line-height: 1.04; }
+.title-detail { display: block; margin-top: 18px; font-size: clamp(18px, 1.5vw, 23px); font-weight: 400; line-height: 1.4; letter-spacing: -0.01em; color: #e6e6e2; }
+.hero-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; font-size: 12px; line-height: 1.7; color: #d1d1ce; }
+.hero-foot p { margin: 0; }
+.hero-foot a { color: inherit; }
+.motion { flex-shrink: 0; padding: 4px 12px; border: 1px solid #cccec7; border-radius: 20px; background: transparent; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.motion:hover { border-color: var(--ink); color: var(--ink); }
+.hero .motion { border-color: #888; background: #0006; color: #eee; }
+.hero .motion:hover { border-color: #fff; color: #fff; }
+.hero a:focus-visible, .hero button:focus-visible { outline-color: var(--accent-hero); }
+
+/* Full-screen opening: the clip covers the first screen; the title sits over a quiet area.
+   .is-split keeps the clip on the left 64% and fades it into black under the title. */
+.hero--cover .hero-frame { position: relative; isolation: isolate; height: 100svh; min-height: 640px; overflow: hidden; }
+.hero--cover .hero-media { position: absolute; inset: 0; z-index: -2; background: #000; }
+.hero--cover .hero-media video { width: 100%; height: 100%; object-fit: cover; object-position: var(--hero-pos, 50% 50%); background: #000; }
+.hero--cover .hero-frame::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, 0.38), transparent 26%, transparent 70%, rgba(0, 0, 0, 0.62)); }
+.hero--cover .hero-heading { position: absolute; top: clamp(84px, 11svh, 124px); right: 5vw; width: min(44vw, 780px); text-shadow: 0 2px 16px #000b; }
+.hero--cover.is-split .hero-media { right: 36%; }
+.hero--cover.is-split .hero-media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, transparent 62%, #000); }
+.hero--cover.is-split .hero-heading { width: min(32vw, 560px); }
+.hero--cover .hero-foot { position: absolute; left: 5vw; right: 5vw; bottom: 24px; }
+.hero-explore { position: absolute; bottom: 26px; left: 50%; z-index: 1; display: inline-flex; align-items: center; gap: 24px; padding-bottom: 7px; transform: translateX(-50%); border-bottom: 1px solid #aaa; color: #fff; font-size: 13px; text-decoration: none; }
+.hero-explore:hover { border-color: var(--accent-hero); color: var(--accent-hero); }
+
+/* Framed opening: title on black, the clip below at no more than its own width. */
+.hero--stage { padding: 82px 24px 0; }
+.hero--stage .hero-heading { max-width: 980px; margin: 0 auto; text-align: center; }
+.hero--stage .title-main { font-size: clamp(34px, 3.6vw, 54px); line-height: 1.1; }
+.hero-stage-media { position: relative; width: 100%; max-width: min(var(--max), var(--media-w, var(--max))); margin: 34px auto 0; }
+.hero-stage-media::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, #000, transparent 5%, transparent 95%, #000), linear-gradient(180deg, #000, transparent 8%, transparent 92%, #000); }
+.hero-stage-media.is-light::after { display: none; }
+.hero-stage-media.is-light video { outline: 1px solid #ffffff2e; }
+.hero--stage .hero-foot { max-width: min(var(--max), var(--media-w, var(--max))); margin: 12px auto 0; }
+
+/* Authors band under either opening */
+.hero-meta { max-width: 1100px; margin: 0 auto; padding: 36px 24px 44px; text-align: center; }
+.authors { margin: 0 auto; font-size: 16px; line-height: 1.85; }
+.authors a { text-decoration: none; }
+.hero .authors a:hover { color: #fff; text-decoration: underline; }
+.affiliations { margin-top: 10px; font-size: 14px; color: #c0c0bd; }
+.venue { margin-top: 10px; font-size: 13px; font-style: italic; color: #aaa; }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
+.button { display: inline-flex; align-items: center; gap: 16px; padding: 9px 20px; border: 1px solid #555; border-radius: 24px; background: #151515; color: #eee; font-size: 13px; line-height: 1.5; text-decoration: none; }
+.button:first-child { border-color: #f4f4f1; background: #f4f4f1; color: #20211e; }
+.button:hover { border-color: #ddd; background: #252525; color: #fff; }
+.button:first-child:hover { background: #fff; color: #000; }
+
+/* ---------- Page body ---------- */
+.section-nav { position: sticky; top: 0; z-index: 20; display: flex; justify-content: center; gap: 26px; overflow-x: auto; padding: 16px 24px; border-block: 1px solid var(--line); background: #ffffffed; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); scrollbar-width: none; }
+.section-nav::-webkit-scrollbar { display: none; }
+.section-nav a { flex-shrink: 0; font-size: 12px; white-space: nowrap; text-decoration: none; color: var(--muted); }
+.section-nav a.active { color: var(--accent); }
+.section { padding: 84px 30px; }
+.section.soft { background: var(--wash); }
+.section:not(.soft) + .section:not(.soft) { border-top: 1px solid var(--line); }
+.wide { max-width: var(--max); margin-left: auto; margin-right: auto; }
+.reading { max-width: var(--read); margin-left: auto; margin-right: auto; }
+.reading + .wide, .wide + .reading, .wide + .wide, .reading + .reading { margin-top: 32px; }
+h2 { margin-bottom: 14px; font-size: clamp(31px, 3.1vw, 42px); font-weight: 600; }
+h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+h3 { margin: 36px 0 14px; font-size: 24px; font-weight: 600; }
+.question { margin: 0 0 26px; font: italic 400 22px/1.45 var(--serif); letter-spacing: -0.01em; color: #6a6d66; }
+.statement { padding: 88px 30px 72px; text-align: center; }
+.statement .lead { max-width: 760px; margin: 22px auto 0; font-size: 22px; line-height: 1.6; color: #474c43; }
+.statement .lead + p { margin-top: 20px; color: #5e645a; }
+.note { margin-top: 24px; padding-left: 14px; border-left: 2px solid var(--line); font-size: 14px; line-height: 1.7; color: var(--muted); }
+
+/* Media blocks */
+figcaption { font-size: 13px; line-height: 1.65; color: var(--muted); }
+.figure-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-top: 12px; }
+.figure-foot > span { flex: 1; }
+.clip > figcaption:not(.figure-foot) { margin-top: 12px; }
+/* A figure fits on one screen below the sticky nav (a tall one keeps its proportions, centred); click for the large view.
+   Multiplied onto the section behind it, so the white it is drawn on takes the section's colour (the large view keeps white). */
+.paper-fig img { width: 100%; max-height: max(320px, calc(100svh - 200px)); object-fit: contain; mix-blend-mode: multiply; }
+.paper-fig figcaption { margin-top: 12px; text-align: center; }
+.zoom { display: block; cursor: zoom-in; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+/* .pair.match: each item grows in proportion to its media's aspect ratio (--ar = width / height on the item),
+   so the two images or clips come out the same height */
+.pair.match { display: flex; align-items: flex-start; }
+.pair.match > * { flex: var(--ar, 1) 1 0; min-width: 0; }
+.strip { display: grid; grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); gap: 14px; }
+.strip img { width: 100%; aspect-ratio: var(--ratio, 4 / 5); object-fit: cover; border-radius: 3px; background: #0b0b0b; }
+.strip--contain img { object-fit: contain; }
+.strip--scroll { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 190px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: 10px; scrollbar-width: thin; }
+.strip--scroll > figure { scroll-snap-align: start; }
+.strip--scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.strip figcaption { margin-top: 8px; font-size: 12px; line-height: 1.5; }
+.strip figcaption b { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+.strip + .strip-caption { margin-top: 14px; }
+.strip-caption { font-size: 13px; text-align: center; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); padding: 22px 0; border-block: 1px solid var(--line); }
+.stat { padding: 6px 12px; text-align: center; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat b { display: block; font-size: 30px; font-weight: 500; line-height: 1.2; letter-spacing: -0.04em; color: #2c2e2a; }
+.stat span { display: block; margin-top: 8px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.steps { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 22px; padding: 28px 0; border-block: 1px solid var(--line); }
+.steps > div { padding: 0 20px; }
+.steps > div > span { font-size: 12px; color: var(--accent); }
+.steps h4 { margin: 10px 0; font-size: 22px; font-weight: 500; }
+.steps p { font-size: 14px; line-height: 1.6; color: var(--muted); }
+.steps > .arrow { align-self: center; font-size: 24px; color: #aeb4a7; }
+.tabs { display: flex; gap: 26px; margin-bottom: 20px; overflow-x: auto; border-bottom: 1px solid #cacfc3; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { flex-shrink: 0; margin-bottom: -1px; padding: 12px 0; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.tabs button[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); }
+.tab-panel:not([hidden]) + .tab-panel { margin-top: 36px; }
+.tab-panel > p { max-width: var(--read); margin: 16px auto 0; font-size: 15px; }
+.evidence { border-block: 1px solid var(--line); }
+.evidence summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; font-size: 14px; font-weight: 500; list-style: none; cursor: pointer; }
+.evidence summary::-webkit-details-marker { display: none; }
+.evidence summary::after { content: "+"; font-size: 20px; font-weight: 400; color: var(--muted); }
+.evidence[open] summary::after { content: "−"; }
+.evidence > :not(summary) { margin-bottom: 24px; }
+.evidence + .evidence { border-top: 0; }
+
+/* Data tables (values from the paper's tables): .table-wrap scrolls sideways on narrow screens */
+.table-wrap { overflow-x: auto; overscroll-behavior-x: contain; }
+.table-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.data-table th, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: right; }
+.data-table td { white-space: nowrap; }
+.data-table th:first-child, .data-table td:first-child { padding-left: 0; text-align: left; }
+.data-table th:last-child, .data-table td:last-child { padding-right: 0; }
+.data-table thead th { border-bottom-color: #cacfc3; font-size: 12px; font-weight: 600; line-height: 1.4; color: var(--muted); vertical-align: bottom; }
+.data-table tbody th { font-weight: 500; }
+.table-fig figcaption { margin-top: 12px; text-align: center; }
+/* .grouped: one tbody per group, its name in a th spanning the group's rows (scope="rowgroup"); lines only between
+   groups. .fit: only as wide as the columns, centred. */
+.data-table.grouped tbody tr > * { padding-top: 6px; padding-bottom: 6px; border-bottom: 0; }
+.data-table.grouped tbody tr:first-child > * { padding-top: 14px; }
+.data-table.grouped tbody tr:last-child > * { padding-bottom: 14px; }
+.data-table.grouped tbody + tbody tr:first-child > * { border-top: 1px solid var(--line); }
+.data-table.grouped tbody th[rowspan] { font-weight: 600; vertical-align: top; }
+.data-table.grouped tbody td:first-of-type { padding-left: 14px; color: var(--muted); text-align: right; }
+.data-table.fit { width: auto; margin: 0 auto; }
+.data-table.fit th, .data-table.fit td { padding-right: 26px; padding-left: 26px; }
+.data-table.fit th:first-child, .data-table.fit td:first-child { padding-left: 0; }
+.data-table.fit th:last-child, .data-table.fit td:last-child { padding-right: 0; }
+/* A table with color blocks of the same shares beside it (.heatmap, e.g. a classifier's results). Both are .data-table
+   with the same header rows ("Identified as" over the classes: th.axis), so their rows line up; the rows are taller
+   here, so the blocks come out square. A block is the palette's light end mixed toward its dark end by its share
+   (--v, 0 to 1), with rounded corners and a gap around it; th.axis-rows titles the rows, turned to read upward. */
+.table-pair { display: grid; grid-template-columns: minmax(0, 470px) auto; justify-content: center; align-items: start; gap: 64px; }
+.table-pair .data-table tbody th, .table-pair .data-table tbody td { padding-top: 15px; padding-bottom: 15px; }
+.data-table thead tr:not(:last-child) th { padding-bottom: 6px; }
+.data-table thead th:empty { border-bottom-color: transparent; }
+.data-table thead th.axis { font-size: 11px; letter-spacing: 0.08em; text-align: center; text-transform: uppercase; }
+.heatmap { --hm-low: #e9f2f5; --hm-high: #14527a; width: auto; }
+.heatmap th, .heatmap td, .heatmap thead th { border-bottom-color: transparent; }
+.heatmap thead th + th { padding-right: 0; padding-left: 0; text-align: center; }
+.heatmap tbody th:not(.axis-rows) { padding-right: 10px; padding-left: 0; font-size: 12px; line-height: 21px; color: var(--muted); text-align: right; }
+/* The rows' title is ordinary text turned 90° in a column of its own: vertical writing-mode in a narrow cell wraps and
+   overflows in Safari. */
+.heatmap th.axis-rows { position: relative; width: 28px; padding: 0; }
+.heatmap th.axis-rows span { position: absolute; top: 50%; left: 50%; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; line-height: 1.4; color: var(--muted); text-transform: uppercase; white-space: nowrap; transform: translate(-50%, -50%) rotate(-90deg); }
+.heatmap td { position: relative; z-index: 0; width: 52px; padding-right: 0; padding-left: 0; font-size: 13px; font-weight: 500; line-height: 21px; color: #33404a; text-align: center; }
+.heatmap td::before { content: ""; position: absolute; inset: 2px; z-index: -1; border-radius: 5px; background: color-mix(in oklab, var(--hm-high) calc(var(--v, 0) * 100%), var(--hm-low)); }
+.heatmap td.dark { color: #fff; }
+
+/* Beyond the paper */
+.beyond .eyebrow { color: var(--muted); }
+.beyond .eyebrow::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border: 1px solid currentColor; border-radius: 50%; vertical-align: 1px; }
+
+/* Q&A */
+.qa details { border-top: 1px solid var(--line); }
+.qa details:last-child { border-bottom: 1px solid var(--line); }
+.qa summary { display: flex; justify-content: space-between; gap: 24px; padding: 16px 0; font-size: 16px; font-weight: 500; list-style: none; cursor: pointer; }
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::after { content: "+"; color: #999; }
+.qa details[open] summary::after { content: "−"; }
+.qa details p { padding: 0 20px 18px 0; font-size: 15px; line-height: 1.8; color: #555; }
+
+/* Paper & citation */
+.paper-title { margin-top: 8px; font-size: 21px; font-weight: 500; line-height: 1.5; }
+.section .venue { color: var(--muted); }
+.paper-links { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 20px; }
+.text-link { font-size: 14px; color: var(--accent); }
+.citation { margin-top: 32px; }
+.citation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin: 4px 0 12px; font-size: 13px; color: var(--accent); }
+.citation-copy { padding: 6px 15px; border: 1px solid #c8ccc3; border-radius: 20px; background: #fff; color: var(--ink); font-size: 12px; line-height: 1.6; }
+.citation-copy:hover { border-color: var(--accent); color: var(--accent); }
+.citation-status { min-height: 1.6em; font-size: 13px; color: var(--muted); }
+.citation pre { max-width: 100%; margin: 8px 0 24px; padding: 18px 20px; overflow-wrap: anywhere; white-space: pre-wrap; border: 1px solid var(--line); border-radius: 3px; background: #fff; color: #4a4e45; font: 12px/1.75 var(--mono); tab-size: 2; }
+.affiliation-list { padding-left: 22px; font-size: 14px; line-height: 1.7; }
+.affiliation-list li { padding: 4px 0; }
+.small { font-size: 13px; }
+.credit { margin-top: 28px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+
+/* Full video */
+.chapters { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin-top: 18px; }
+.chapters button { padding: 4px 0; border: 0; border-bottom: 1px solid #c8ccc3; background: none; color: #4e5746; font-size: 12px; }
+.chapters button:hover { border-color: var(--accent); color: var(--accent); }
+.chapters span { margin-right: 6px; color: #858b7d; font-variant-numeric: tabular-nums; }
+
+/* Related & footer */
+.related-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.related-list a { display: block; height: 100%; padding: 16px 18px; border: 1px solid var(--line); border-radius: 4px; text-decoration: none; }
+.related-list a:hover { border-color: var(--accent); }
+.related-list b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; }
+.related-list span { display: block; margin-top: 6px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.footer { display: flex; justify-content: flex-end; gap: 20px; max-width: 1200px; margin: 0 auto; padding: 30px 32px 42px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.footer a { text-decoration: none; }
+.footer p { margin: 0; }
+
+/* Lightbox */
+dialog { width: calc(100vw - 48px); max-width: 1400px; max-height: calc(100vh - 48px); padding: 30px; overflow: auto; border: 0; background: #fff; }
+dialog::backdrop { background: #171d15e8; }
+dialog img { width: auto; max-width: 100%; margin: 0 auto; }
+.close-lightbox { position: sticky; top: 0; z-index: 1; display: block; margin: -16px -16px 4px auto; padding: 5px 10px; border: 0; background: #fff; color: #323c2a; font-size: 28px; line-height: 1; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero--cover .hero-frame { min-height: 640px; }
+  .hero--cover.is-split .hero-media { right: 0; }
+  .hero--cover.is-split .hero-media::after { display: none; }
+  .hero--cover .hero-media video { object-position: var(--hero-pos-mobile, var(--hero-pos, 50% 50%)); }
+  .hero--cover .hero-frame::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.05) 24%, rgba(0, 0, 0, 0.45) 48%, rgba(0, 0, 0, 0.9) 74%, rgba(0, 0, 0, 0.96)); }
+  .hero--cover .hero-heading, .hero--cover.is-split .hero-heading { top: auto; right: 32px; bottom: 150px; left: 32px; width: auto; max-width: 640px; }
+  .hero-explore { bottom: 92px; left: 32px; transform: none; }
+  .hero-nav { padding: 20px 32px; }
+  .hero--cover .hero-foot { right: 32px; left: 32px; }
+  .trio { grid-template-columns: 1fr; }
+  .table-pair { grid-template-columns: minmax(0, 470px); gap: 28px; }
+  .heatmap { justify-self: center; }
+}
+@media (max-width: 800px) {
+  .desktop-break { display: none; }
+  .authors { font-size: 14px; }
+  .affiliations { font-size: 12px; }
+  .section-nav { justify-content: flex-start; gap: 22px; }
+  .section { padding: 62px 24px; }
+  .statement { padding: 62px 24px 52px; }
+  .statement .lead { font-size: 20px; }
+  .stat b { font-size: 26px; }
+  .footer { flex-wrap: wrap; }
+  .footer p { order: 3; width: 100%; text-align: center; }
+}
+@media (max-width: 650px) {
+  .hero--cover .hero-heading, .hero--cover.is-split .hero-heading { right: 24px; left: 24px; }
+  .title-main { font-size: clamp(36px, 10vw, 52px); }
+  .title-detail { margin-top: 14px; font-size: 17px; }
+  .hero-explore { left: 24px; font-size: 12px; }
+  .hero--cover .hero-foot { right: 24px; bottom: 20px; left: 24px; font-size: 11px; }
+  .hero-nav { padding: 16px 24px; font-size: 12px; }
+  .hero--stage { padding: 72px 16px 0; }
+  .hero-meta { padding: 28px 20px 32px; }
+  .actions { gap: 8px; }
+  .button { gap: 12px; padding: 8px 13px; font-size: 12px; }
+  .pair { grid-template-columns: 1fr; }
+  .pair.match { flex-direction: column; }
+  .pair.match > * { flex: none; width: 100%; }
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strip--scroll { grid-template-columns: none; grid-auto-columns: 150px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; }
+  .stat + .stat { border-left: 0; }
+  .stat:nth-child(even) { border-left: 1px solid var(--line); }
+  .steps { grid-template-columns: 1fr; gap: 18px; }
+  .steps > .arrow { display: none; }
+  .figure-foot { flex-wrap: wrap; gap: 10px; }
+  .figure-foot > span { flex-basis: 100%; }
+  .figure-foot .motion { margin-left: auto; }
+}
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  h2 { font-size: 29px; }
+  .question { font-size: 20px; }
+  .section { padding: 50px 20px; }
+  .tabs { gap: 20px; }
+  .tabs button { font-size: 13px; }
+  .chapters { justify-content: flex-start; gap: 10px 18px; }
+  .data-table { font-size: 13px; }
+  .heatmap td { width: 50px; font-size: 12px; }
+  dialog { width: calc(100vw - 22px); padding: 28px 10px 10px; }
+  .citation pre { padding: 14px 12px; font-size: 11px; }
+}
+@media (max-height: 600px) and (min-width: 901px) {
+  .hero--cover .hero-frame { min-height: 540px; }
+  .hero--cover .hero-heading { top: 76px; }
+  .title-main { font-size: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+  </style>
+</head>
+<body style="--accent:#3d4c9e; --accent-hero:#a2acf4">
+  <a class="skip" href="#overview">Skip to content</a>
+
+  <header class="hero hero--stage" style="--media-w:1920px">
+    <nav class="hero-nav" aria-label="Site">
+      <a href="https://doi.org/10.1177/02783649261419836">Paper ↗</a>
+    </nav>
+    <div class="hero-heading">
+      <p class="eyebrow">Compliant units · Sensing &amp; force-based interaction</p>
+      <h1><span class="title-main">Contact Sensing with Elastic Beams</span><span class="title-detail">Based on the Propagation of Interaction-Induced Deformation</span></h1>
+    </div>
+    <div class="hero-stage-media is-light">
+      <video id="hero-video" class="loop" muted loop playsinline controls preload="metadata" poster="hero.jpg" width="1920" height="1080" aria-label="Top-down view of two pairs of small wheeled robots, each pair holding an orange object between their elastic beams, first along a zigzag line, then along an S-shaped curve. In the top lane, with force-based control, the object reaches the end both times; in the bottom lane, without it, the object falls early on the zigzag line, and the pair stalls near the start of the S-shaped curve." aria-describedby="hero-caption">
+        <source src="hero.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-foot">
+      <p id="hero-caption">Two pairs of robots each carry an object between their beams, first along a zigzag line, then along an S-type curve. Top, with force-based control: the object reaches the end both times. Bottom, without force-based control: the object falls early on the zigzag line, and the pair stalls near the start of the S-type curve. 4× speed.</p>
+      <button class="motion" type="button" data-video="hero-video">Play clip</button>
+    </div>
+    <div class="hero-meta">
+      <p class="authors">Genliang Chen<sup>1,2,*</sup>, Junjie Luo<sup>1</sup>, Siyue Yao<sup>1</sup>, Hao Yuan<sup>1</sup>, Yanjun Wang<sup>3</sup>, Tao Yu<sup>1</sup>, Hao Wang<sup>3</sup>, Zhongqin Lin<sup>4</sup></p>
+      <p class="affiliations"><sup>1–4</sup> Shanghai Jiao Tong University &nbsp;·&nbsp; <sup>*</sup>&nbsp;Corresponding&nbsp;author</p>
+      <p class="venue">The International Journal of Robotics Research, 2026 · OnlineFirst</p>
+      <div class="actions">
+        <a class="button" href="https://doi.org/10.1177/02783649261419836">Paper <span aria-hidden="true">↗</span></a>
+        <a class="button" href="#robot">Robot demos <span aria-hidden="true">↓</span></a>
+        <a class="button" href="#video">Full video <span aria-hidden="true">▷</span></a>
+        <a class="button" href="#citation">BibTeX</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="section-nav" aria-label="On this page">
+    <a href="#overview">Overview</a><a href="#why">Why</a><a href="#hardware">Hardware</a><a href="#method">Method</a><a href="#accuracy">Accuracy</a><a href="#robot">Robot</a><a href="#piano">Piano</a><a href="#beyond">Beyond the paper</a><a href="#paper">Paper</a><a href="#video">Video</a>
+  </nav>
+
+  <main>
+    <section class="section statement" id="overview">
+      <div class="reading">
+        <p class="eyebrow">The idea</p>
+        <h2>A curved carbon-fiber beam that feels<br><em>where, and how hard, it is touched.</em></h2>
+        <p class="lead">A curved carbon-fiber beam carries eight strain gauges that read how it bends. A touch anywhere bends the whole beam, so a model of the beam can work back from the readings to where it was touched and how hard.</p>
+        <p>Mounted on a mobile robot as an executor and a sensor, it let the robot measure objects, back away from obstacles, hold a set contact force and carry an object together with a second robot.</p>
+      </div>
+    </section>
+
+    <section class="section soft" id="why">
+      <div class="reading">
+        <p class="eyebrow">01 / Why a beam</p>
+        <h2>Feeling contact<br><em>through a beam.</em></h2>
+        <p class="question">What can a curved carbon-fiber beam feel that a force sensor at its base can't?</p>
+        <p>A force/torque sensor at a robot's wrist or in its joints measures the load where it is mounted, so it detects contact only at a few locations. Tactile skins spread sensors over a surface, but each sensor is read on its own, so a large skin with fine resolution becomes complex to build and to wire.</p>
+        <p>This sensor uses a slender elastic beam as the sensing medium. A touch anywhere along it changes the shape of the whole beam, so a few strain gauges at fixed spots can tell where it was touched and how hard. The same beam is compliant, so it also cushions impacts.</p>
+      </div>
+      <figure class="wide paper-fig"><a class="zoom" href="fig-1-system.webp"><img src="fig-1-system.webp" width="1902" height="766" loading="lazy" alt="Figure 1: a finger presses a curved carbon-fiber beam held by two white mounts on an optical table; insets show a strain gauge's 2 by 2 grid and its bridge circuit, how a gauge reads the beam's local bending, the sampling circuit board, and the beam with eight gauges joined by a flexible printed circuit."></a><figcaption>Fig. 1: the measuring system, with a finger pressing the curved beam. Each gauge is a 2 × 2 grid in a full bridge that reads the local bending; eight gauges sit on one flexible circuit along the beam.</figcaption></figure>
+    </section>
+
+    <section class="section" id="hardware">
+      <div class="reading">
+        <p class="eyebrow">02 / Hardware</p>
+        <h2>The sensing<br><em>hardware.</em></h2>
+        <p class="question">What turns a curved carbon-fiber beam into a sensor?</p>
+        <p>The beam is carbon fiber, 300 mm long with a 14 × 0.5 mm cross-section. It is straight when free and curves once aluminum mounts fix both ends to the table. It carries eight strain gauges on its back, at discrete positions. Each is a 2 × 2 grid wired as a full Wheatstone bridge, so its voltage changes linearly with the local bending and is robust to temperature drift.</p>
+        <p>The gauges and their wiring are etched as one flexible printed circuit, with no soldered jumper wires, and the thin circuit adds a negligible constraint to the beam. A sampling board slightly larger than a 50-cent coin filters, amplifies and digitizes the signals; one board samples four gauges at about 930 Hz.</p>
+      </div>
+      <figure class="wide paper-fig"><a class="zoom" href="fig-s1-hardware.webp"><img src="fig-s1-hardware.webp" width="2000" height="1077" loading="lazy" alt="Figure S1: a gold-colored flexible circuit with two strain gauges, a close-up of a gauge's grid pattern, a hand holding the sampling circuit wired to gauges on a beam, and the sampling circuit's boards beside a coin."></a><figcaption>Fig. S1: the flexible-circuit strain gauges and their bridge pattern, and the sampling circuit, with two daughterboards, a motherboard and a microcontroller, beside a 50-cent coin.</figcaption></figure>
+      <div class="wide stats">
+        <div class="stat"><b>300 mm</b><span>Carbon-fiber beam, 14 × 0.5 mm in cross-section</span></div>
+        <div class="stat"><b>8</b><span>Strain gauges on one flexible circuit</span></div>
+        <div class="stat"><b>38 × 28 × 20 mm³</b><span>Sampling circuit</span></div>
+        <div class="stat"><b>≈ 930 Hz</b><span>Sampling rate for four gauges</span></div>
+      </div>
+      <figure class="reading paper-fig"><a class="zoom" href="fig-6-gauges.webp"><img src="fig-6-gauges.webp" width="2000" height="1390" loading="lazy" alt="Figure 6: the curved beam drawn as a chain of short segments between two mounts, with compact strain gauges at several positions; each gauge spans a few elastic joints, and a selection matrix adds up their angles."></a><figcaption>Fig. 6: where the gauges sit; each gauge reads the summed bending of the beam segments it covers.</figcaption></figure>
+    </section>
+
+    <section class="section soft" id="method">
+      <div class="reading">
+        <p class="eyebrow">03 / Sensing method</p>
+        <h2>From bending<br><em>to contact.</em></h2>
+        <p class="question">How do eight readings reveal two unknown touches?</p>
+        <p>The model treats the beam as 60 rigid segments of 5 mm joined by elastic joints, so its large deflection becomes the statics of a chain of links. The equations are solved by Newton–Raphson with an analytical Jacobian. Each gauge reads the summed bending of the joints it covers.</p>
+        <p>The model treats each contact as frictionless, so a touch brings two unknowns, its position and the size of its normal force: two touches make four unknowns and need at least four gauges. With friction, each touch would add a tangential force, making six unknowns and needing at least six gauges. The prototype's eight gauges over-determine either case, and the model is solved by least squares. The estimate is built in three steps.</p>
+      </div>
+      <figure class="wide paper-fig"><a class="zoom" href="fig-9-pipeline.webp"><img src="fig-9-pipeline.webp" width="2000" height="704" loading="lazy" alt="Figure 9: an arched beam with its compliance drawn as lines along it; a 3-D surface whose lowest point marks the best pair of segments; and the beam deformed by two round objects, with the two contact forces."></a><figcaption>Fig. 9: the beam's equilibrium and compliance, the pattern search over all pairs of segments, and the large-deformation solution for two contacts.</figcaption></figure>
+      <div class="wide steps" aria-label="How the two contacts are estimated">
+        <div><span>01</span><h4>Match</h4><p>Compare the readings with precomputed bending patterns of unit loads at every pair of segments, and keep the closest pair</p></div><span class="arrow" aria-hidden="true">→</span>
+        <div><span>02</span><h4>Linearize</h4><p>With the contact segments fixed, solve the small-deformation model for the two force magnitudes</p></div><span class="arrow" aria-hidden="true">→</span>
+        <div><span>03</span><h4>Refine</h4><p>Start a Newton–Raphson solution of the large-deformation model from that estimate</p></div>
+      </div>
+      <div class="reading">
+        <p>Because the readings arrive continuously, each refinement starts close to the answer. With the robot, the reference sensors and the gauges linked in a C++ framework, the whole system ran at about 30 Hz for two contacts.</p>
+      </div>
+      <figure class="reading paper-fig"><a class="zoom" href="fig-8-matching.webp"><img src="fig-8-matching.webp" width="1619" height="1181" loading="lazy" alt="Figure 8: the beam's response to unit loads drawn as a band, with planes at segments 28 and 48, and a radar chart comparing the sensed readings with the patterns of the two segments."></a><figcaption>Fig. 8: for a single touch, the readings (black) follow the unit-load pattern of segment 28, with a matching index of 0.007, far closer than segment 48 at 0.218.</figcaption></figure>
+    </section>
+
+    <section class="section" id="accuracy">
+      <div class="reading">
+        <p class="eyebrow">04 / Validation</p>
+        <h2>How accurate<br><em>is it?</em></h2>
+        <p class="question">How accurately does the beam locate a contact and measure its force?</p>
+        <p>A robot arm pressed the curved beam with a single pulley at 57 locations on a 3 × 19 grid, while a force/torque sensor measured the contact force and a tracker measured the pulley's position. From these data the authors calibrated the joint stiffness, each gauge's sensitivity and the gauges' exact positions. With the calibrated parameters, the mean errors were 1.74 mm in position and 0.11 N in force, about 7.68% of the contact force.</p>
+        <p>Then two pulleys pressed at once, 100 to 180 mm apart, in 30 configurations. The mean position errors were 3.38 mm for the left pulley and 2.90 mm for the right, and the mean force errors 0.13 N and 0.19 N, about 8.50% and 8.96% of the forces.</p>
+      </div>
+      <div class="wide pair match">
+        <figure class="paper-fig" style="--ar:1.3500"><a class="zoom" href="fig-10-calibration.webp"><img src="fig-10-calibration.webp" width="1597" height="1183" loading="lazy" alt="Figure 10: a robot arm with a force/torque sensor and a single-pulley end-effector above the curved beam; yellow dots mark a grid of calibration positions along the beam."></a><figcaption>Fig. 10: the calibration setup, with a single pulley on a robot arm, below a force/torque sensor, pressing the beam at the marked grid positions.</figcaption></figure>
+        <figure class="paper-fig" style="--ar:0.8432"><a class="zoom" href="fig-12-two-point.webp"><img src="fig-12-two-point.webp" width="1673" height="1984" loading="lazy" alt="Figure 12: two pulleys press the curved beam; 3-D bar charts give the position error and the contact force of the left and right pulleys for each configuration and pulley distance."></a><figcaption>Fig. 12: the two-pulley setup, and the position errors and forces for all 30 configurations.</figcaption></figure>
+      </div>
+      <div class="wide stats">
+        <div class="stat"><b>1.74 mm</b><span>Mean position error, one contact</span></div>
+        <div class="stat"><b>0.11 N</b><span>Mean force error, one contact</span></div>
+        <div class="stat"><b>3.38 / 2.90 mm</b><span>Mean position errors, two contacts</span></div>
+        <div class="stat"><b>0.13 / 0.19 N</b><span>Mean force errors, two contacts</span></div>
+      </div>
+    </section>
+
+    <section class="section soft" id="robot">
+      <div class="reading">
+        <p class="eyebrow">05 / On a mobile robot</p>
+        <h2>A beam<br><em>that feels.</em></h2>
+        <p class="question">What can a mobile robot do once its beam can feel?</p>
+        <p>One curved sensing beam spans the front of an omnidirectional mobile robot. The gauge signals go over Bluetooth to a computer that runs the sensing model and drives the robot. The beam is both the robot's executor and its sensor: it presses on objects and holds them, and it senses where, and how hard, it touches them.</p>
+      </div>
+      <figure class="wide paper-fig"><a class="zoom" href="fig-13-applications.webp"><img src="fig-13-applications.webp" width="2000" height="1027" loading="lazy" alt="Figure 13: a top view of the triangular mobile robot with its elastic beam, sampling board, battery and Bluetooth module labelled, surrounded by sketches of its tasks: sensing objects of different sizes, estimating a cylinder's size and center, detaching from an obstacle, controlling contact force, and two robots carrying an object."></a><figcaption>Fig. 13: the robot with its sensing beam, and its tasks: measuring objects, locating a cylinder, backing away from an obstacle, controlling contact force and carrying an object with a second robot.</figcaption></figure>
+      <div class="wide">
+        <div class="tabs" role="tablist" aria-label="Mobile-robot tasks">
+          <button id="tab-length" role="tab" aria-selected="true" aria-controls="panel-length">Box length</button>
+          <button id="tab-cylinder" role="tab" aria-selected="false" aria-controls="panel-cylinder">Cylinder</button>
+          <button id="tab-force" role="tab" aria-selected="false" aria-controls="panel-force">Force control</button>
+          <button id="tab-carry" role="tab" aria-selected="false" aria-controls="panel-carry">Carrying</button>
+        </div>
+        <div class="tab-panel" id="panel-length" role="tabpanel" aria-labelledby="tab-length">
+          <figure class="clip"><video id="clip-length" class="loop" muted loop playsinline controls preload="none" poster="clip-length.jpg" width="1280" height="720" aria-label="Top view of the robot with its beam pressed against a blue box; labels mark the two contact points and the object length, and a plot draws the beam's shape with the two contacts."><source src="clip-length.mp4" type="video/mp4"></video><figcaption class="figure-foot"><span>The beam rests against a box at two corners; the plot shows the estimated beam shape with the two contact points, whose distance is the box's length.</span><button type="button" class="motion" data-video="clip-length">Play clip</button></figcaption></figure>
+          <p>Three boxes were touched at the left, middle and right of the beam, five times each: 45 trials. Every trial identified the correct box, with a mean length error of 2.33 mm, within 2% for boxes of 100 to 200 mm. Within each set of five trials, the estimates varied by no more than 3.70 mm.</p>
+          <details class="evidence reading"><summary>See the length results</summary><figure class="paper-fig"><a class="zoom" href="fig-14-length.webp"><img src="fig-14-length.webp" width="1525" height="1793" loading="lazy" alt="Figure 14: photos of the robot pressing a large, a medium and a small box, above bars of the true side length and the lengths estimated at the left, middle and right of the beam."></a><figcaption>Fig. 14: the three boxes and the side lengths estimated at the left, middle and right of the beam.</figcaption></figure></details>
+        </div>
+        <div class="tab-panel" id="panel-cylinder" role="tabpanel" aria-labelledby="tab-cylinder">
+          <figure class="clip"><video id="clip-cylinder" class="loop" muted loop playsinline controls preload="none" poster="clip-cylinder.jpg" width="1280" height="720" aria-label="Top view: the robot drives forward until its beam touches a round cylinder; labels mark the first and second contacts, then a dashed circle marks the identified center and radius."><source src="clip-cylinder.mp4" type="video/mp4"></video><figcaption class="figure-foot"><span>The second of two touches: the robot drives into the cylinder again, and the two contacts with their normal directions give the cylinder's center and radius.</span><button type="button" class="motion" data-video="clip-cylinder">Play clip</button></figcaption></figure>
+          <p>The robot touched a cylinder 130 mm in diameter, backed off, moved 110 mm sideways and touched it again. The two contact normals cross at the center, and the distances to it give the radius. Over five trials from different starting points, the mean radius error was 3.66 mm (at most 5.61 mm) and the mean position error 10.60 mm (at most 12.88 mm); the robot then drove straight toward the center. The robot moves open-loop on its wheel encoders, and the authors note that its motion errors affect these results.</p>
+          <details class="evidence reading"><summary>See the cylinder result</summary><figure class="paper-fig"><a class="zoom" href="fig-15-cylinder.webp"><img src="fig-15-cylinder.webp" width="1655" height="993" loading="lazy" alt="Figure 15: three top views: the robot touches a cylinder twice, the two contact points and normals locate its center and radius, and the robot lines up with the center."></a><figcaption>Fig. 15: two contacts, the estimated center and radius, and the robot lined up with the center.</figcaption></figure></details>
+        </div>
+        <div class="tab-panel" id="panel-force" role="tabpanel" aria-labelledby="tab-force">
+          <figure class="clip"><video id="clip-force-control" class="loop" muted loop playsinline controls preload="none" poster="clip-force-control.jpg" width="1280" height="720" aria-label="Two robots, one above the other, drive their beams into a fixed force sensor in slow motion; beside each, force curves rise. With control, the measured and identified forces settle near the target line; without control, the force stays above it."><source src="clip-force-control.mp4" type="video/mp4"></video><figcaption class="figure-foot"><span>A collision with a fixed force sensor, with control (top) and without (bottom); the curves show the measured force, the force identified from the beam and the target. 0.05× speed.</span><button type="button" class="motion" data-video="clip-force-control">Play clip</button></figcaption></figure>
+          <p>The robot drove into an object at an unknown distance at 50, 150 and 250 mm/s, five times each, while a PID controller adjusted its speed to hold a 5 N contact force. The force settled within 0.52 s in every condition, in 0.24 s at the lowest speed, with a steady-state error below 0.88 N, and the force identified from the beam stayed close to the reference sensor's. The beam's elastic deflection softens the impact even without control, which leaves the controller room to act.</p>
+          <details class="evidence reading"><summary>See the force-control results</summary><figure class="paper-fig"><a class="zoom" href="fig-18-force-control.webp"><img src="fig-18-force-control.webp" width="2000" height="679" loading="lazy" alt="Figure 18: the robot approaching a force sensor from an unknown distance; force over time at 50, 150 and 250 millimeters per second, measured, identified, target and uncontrolled; and bars of the overshoot and steady-state error at each speed."></a><figcaption>Fig. 18: the collision setup, the force traces at the three speeds, and the overshoot and steady-state error at each.</figcaption></figure></details>
+        </div>
+        <div class="tab-panel" id="panel-carry" role="tabpanel" aria-labelledby="tab-carry">
+          <figure class="clip"><video id="clip-carrying" class="loop" muted loop playsinline controls preload="none" poster="hero.jpg" width="1920" height="1080" aria-label="Top-down view of two pairs of small wheeled robots, each pair holding an orange object between their elastic beams, first along a zigzag line, then along an S-shaped curve. In the top lane, with force-based control, the object reaches the end both times; in the bottom lane, without it, the object falls early on the zigzag line, and the pair stalls near the start of the S-shaped curve."><source src="hero.mp4" type="video/mp4"></video><figcaption class="figure-foot"><span>Two pairs of robots each carry an object between their beams, first along a zigzag line, then along an S-type curve. Top, with force-based control: the object reaches the end both times. Bottom, without it: the object falls early on the zigzag line, and the pair stalls near the start of the S-type curve. 4× speed.</span><button type="button" class="motion" data-video="clip-carrying">Play clip</button></figcaption></figure>
+          <p>The rear robot follows a set path while the front robot adjusts its position to keep a 3 N clamping force on the object: enough to hold it (more than 0.6 N) without making the wheels slip (no more than 10 N). On a straight line, the force measured by a sensor inside the object fluctuated around the target but stayed in that range, and the beam's estimate followed it with a mean error of 0.67 N. With force feedback, the object was carried to the end along a straight line, a circular arc, a zigzag line and an S-type curve; without it, the collaboration failed during or at the end of the run.</p>
+          <details class="evidence reading"><summary>See the carrying results</summary><figure class="paper-fig"><a class="zoom" href="fig-19-carrying.webp"><img src="fig-19-carrying.webp" width="2000" height="707" loading="lazy" alt="Figure 19: a top view of two robots holding an object with a force sensor between their beams, and a plot of the clamping force over 14 seconds from the commercial force sensor and from the contact sensor, with the target force and the limits."></a><figcaption>Fig. 19: the straight-line run, with the master and slave robots, and the clamping force measured by the object's sensor and estimated from the beam.</figcaption></figure><figure class="paper-fig"><a class="zoom" href="fig-20-trajectories.webp"><img src="fig-20-trajectories.webp" width="1515" height="1961" loading="lazy" alt="Figure 20: four overhead time-lapse photos of two robots carrying an object along a straight line, a circular arc, a zigzag line and an S-shaped curve around toy obstacles."></a><figcaption>Fig. 20: a straight line, a circular arc, a zigzag line and an S-type curve, with up to two obstacles.</figcaption></figure></details>
+        </div>
+      </div>
+      <div class="wide stats">
+        <div class="stat"><b>100–200 mm</b><span>Box lengths measured; mean error 2.33&nbsp;mm</span></div>
+        <div class="stat"><b>3.66 mm</b><span>Mean radius error, 130&nbsp;mm cylinder</span></div>
+        <div class="stat"><b>0.25 N</b><span>Steady-state error at 150&nbsp;mm/s, 5&nbsp;N target force</span></div>
+        <div class="stat"><b>0.67 N</b><span>Mean clamping-force error while carrying</span></div>
+      </div>
+      <div class="reading">
+        <p>To back away from obstacles, the robot drove into a flat board set at angles from −30° to 30° in steps of 10°. It took the board's direction as the beam's tangent at the contact point and backed away along the normal. Over the seven angles, the backing-away direction was off by 2.41° on average; the sensed direction alone, without the robot's motion errors, by 1.19°.</p>
+      </div>
+      <div class="wide pair match">
+        <figure class="paper-fig" style="--ar:1.3853"><a class="zoom" href="fig-16-obstacle.webp"><img src="fig-16-obstacle.webp" width="1600" height="1155" loading="lazy" alt="Figure 16: a top view of the robot driving forward into a cardboard obstacle and backing away; a diagram marks the obstacle angle alpha, the normal direction and the separation direction beta."></a><figcaption>Fig. 16: the robot drives into a board set at an angle α, senses the contact and backs away.</figcaption></figure>
+        <figure class="paper-fig" style="--ar:1.3174"><a class="zoom" href="fig-17-separation.webp"><img src="fig-17-separation.webp" width="1764" height="1339" loading="lazy" alt="Figure 17: bar chart of the obstacle, sensed and detached directions for seven test configurations from minus 30 to 30 degrees."></a><figcaption>Fig. 17: board direction, sensed direction and backing-away direction for the seven angles.</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section" id="piano">
+      <div class="reading">
+        <p class="eyebrow">06 / A virtual piano</p>
+        <h2>Playing<br><em>the beam.</em></h2>
+        <p class="question">How fast does it respond?</p>
+        <p>To show the sampling system's real-time response, the authors built a virtual piano from eight short carbon-fiber cantilevers, 75 × 15 × 0.4 mm, each with one strain gauge and one note from C4 to C5. Pressing a key bends it, and how far it bends sets how loud its note plays.</p>
+        <p>The eight gauges are read through a serial port at a steady 100 Hz, fast enough to catch several keys pressed together, so chords play as well as single notes.</p>
+      </div>
+      <div class="wide pair match">
+        <figure class="clip" style="--ar:1.7778"><video id="video-virtual-piano" controls playsinline preload="none" poster="video-virtual-piano.jpg" width="1280" height="720" aria-label="The virtual piano: fingers press the eight paper-labelled keys of the virtual piano one at a time, then several together, then play a short tune; each press plays a note."><source src="video-virtual-piano.mp4" type="video/mp4">Your browser does not support embedded video. <a href="video-virtual-piano.mp4">Download the video</a>.</video><figcaption>The virtual piano, with sound: single notes, several notes at once, and the tune 'Little Star'.</figcaption></figure>
+        <figure class="paper-fig" style="--ar:1.8083"><a class="zoom" href="fig-s6-piano.webp"><img src="fig-s6-piano.webp" width="2000" height="1106" loading="lazy" alt="Figure S6: eight carbon-fiber keys labelled C4 to C5 with gold flexible circuits and strain gauges, a sketch of a cantilever deflected by a force, and eight reading traces with dips where keys were pressed."></a><figcaption>Fig. S6: the eight keys, C4 to C5, each a cantilever with one gauge, and their readings over time.</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section beyond" id="beyond">
+      <div class="reading">
+        <p class="eyebrow">Beyond the paper</p>
+        <h2>Several keys at once,<br><em>on one curved beam.</em></h2>
+        <p class="note">Another demonstration of multi-point sensing: a virtual piano with numbered keys along one curved carbon-fiber beam, which senses single notes and two notes pressed at once.</p>
+      </div>
+      <div class="wide pair match">
+        <figure class="clip" style="--ar:1.7778"><video id="extra-arch-piano" controls playsinline preload="none" poster="extra-arch-piano.jpg" width="1280" height="720" aria-label="A virtual piano on a curved beam: numbered keys along the beam are pressed one or two at a time while a monitor shows the strain-gauge readings, the notes played and the beam's shape; each press plays a note."><source src="extra-arch-piano.mp4" type="video/mp4"></video><figcaption>Numbered keys along the curved beam are pressed one at a time, then two at once, then for a short piece; the monitor shows the gauge readings, the notes and the beam's shape.</figcaption></figure>
+        <figure class="clip" style="--ar:1.0556"><video id="extra-hand" controls playsinline preload="none" poster="extra-hand.jpg" width="760" height="720" aria-label="A finger presses a curved beam, held by two white mounts, at different points; below, a drawn curve of the beam changes shape with each press."><source src="extra-hand.mp4" type="video/mp4"></video><figcaption>A finger presses the curved beam at different points, and the shape drawn below follows each press.</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section soft" id="qa">
+      <div class="reading">
+        <p class="eyebrow">Questions &amp; answers</p>
+        <h2>Common questions.</h2>
+        <div class="qa">
+          <details><summary>Why not put a force sensor at the base?</summary><p>A force/torque sensor measures the load where it is mounted, so on its own it detects contact only at a few locations. Reading the bending at eight points along the beam lets the model locate contact anywhere on it, and two contacts at once.</p></details>
+          <details><summary>How many strain gauges does it need?</summary><p>Without friction, which is how the paper models the contact, two contacts mean four unknowns, two positions and two normal-force magnitudes, so at least four gauges. With friction, each contact adds a tangential force: six unknowns, so at least six gauges. The prototype's eight gauges over-determine either case, and the frictionless model is solved by least squares.</p></details>
+          <details><summary>Does it handle large deformations?</summary><p>Yes. The small-deformation model gives a first estimate, which starts a Newton–Raphson solution of the full large-deformation model. Because the readings arrive continuously, each step has only a small change to account for, and the system ran at about 30 Hz.</p></details>
+          <details><summary>Why does the beam's compliance help?</summary><p>It cushions collisions and gives the controller more time to respond. In the force-control test, the beam's deflection softened the impact even without control, and with control the force settled at the 5 N target within 0.52 s at speeds up to 250 mm/s.</p></details>
+          <details><summary>What are the limitations?</summary><p>The model covers bending in the beam's plane only, so forces out of that plane go undetected, and it neglects friction at the contact. The thin carbon-fiber beam cannot withstand large forces, and how many gauges fit on it depends on how small they can be made. The authors suggest capturing torsion and combining data-driven methods with the model.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="paper">
+      <div class="reading">
+        <p class="eyebrow">Paper &amp; authors</p>
+        <h2>From local bending<br><em>to global contact.</em></h2>
+        <p class="paper-title">Contact sensing methodology based on propagation of interaction-induced deformation in elastic beams</p>
+        <p>Genliang Chen, Junjie Luo, Siyue Yao, Hao Yuan, Yanjun Wang, Tao Yu, Hao Wang, and Zhongqin Lin.</p>
+        <p class="venue">The International Journal of Robotics Research, OnlineFirst, 2026.</p>
+        <div class="paper-links"><a class="text-link" href="https://doi.org/10.1177/02783649261419836">Read the paper at doi.org/10.1177/02783649261419836 ↗</a></div>
+        <details class="evidence citation" id="citation">
+          <summary>Citation / BibTeX</summary>
+          <div class="citation-actions"><button class="citation-copy" id="copy-bibtex" type="button" aria-describedby="citation-status" hidden>Copy BibTeX</button><a href="citation.bib" download>Download .bib ↓</a></div>
+          <p class="citation-status" id="citation-status" role="status" aria-live="polite"></p>
+          <pre tabindex="0" aria-label="BibTeX citation"><code id="bibtex">@article{chen2026contactsensing,
+  title     = {Contact sensing methodology based on propagation of interaction-induced deformation in elastic beams},
+  author    = {Chen, Genliang and Luo, Junjie and Yao, Siyue and Yuan, Hao and Wang, Yanjun and Yu, Tao and Wang, Hao and Lin, Zhongqin},
+  journal   = {The International Journal of Robotics Research},
+  year      = {2026},
+  note      = {OnlineFirst},
+  publisher = {SAGE Publications},
+  doi       = {10.1177/02783649261419836}
+}</code></pre>
+        </details>
+        <details class="evidence"><summary>Full affiliations</summary><ol class="affiliation-list"><li>The Meta Robotics Institute, and the State Key Laboratory of Mechanical System and Vibration, Shanghai Jiao Tong University, Shanghai, China</li><li>The Shanghai Key Laboratory of Intelligent Robotics, Shanghai Jiao Tong University, Shanghai, China</li><li>The Institute of Marine Equipment, Shanghai Jiao Tong University, Shanghai, China</li><li>The Shanghai Key Laboratory of Digital Manufacturing for Thin-Walled Structures, Shanghai Jiao Tong University, Shanghai, China</li></ol><p class="small">* Corresponding author: Genliang Chen</p></details>
+      </div>
+    </section>
+
+    <section class="section soft" id="video">
+      <div class="reading">
+        <p class="eyebrow">Supplementary video</p>
+        <h2>Watch the mobile-robot video.</h2>
+        <p>Supplementary video S1: measuring box lengths, locating a cylinder, controlling contact force, and pairs of robots carrying an object along a zigzag line and an S-type curve, with and without force-based control.</p>
+      </div>
+      <div class="wide">
+        <video id="video-applications" controls playsinline preload="none" poster="video-applications.jpg" width="1280" height="720" aria-label="Supplementary video S1: the mobile robot measures box lengths with its sensing beam, locates a cylinder, drives into a force sensor with and without force control, and two pairs of robots carry objects along a zigzag line and an S-shaped curve, with and without force-based control."><source src="video-applications.mp4" type="video/mp4">Your browser does not support embedded video. <a href="video-applications.mp4">Download the video</a>.</video>
+        <div class="chapters" aria-label="Chapters">
+          <button type="button" data-target="video-applications" data-time="0"><span>0:00</span>Box length</button>
+          <button type="button" data-target="video-applications" data-time="27"><span>0:27</span>Size and position</button>
+          <button type="button" data-target="video-applications" data-time="62"><span>1:02</span>Force control</button>
+          <button type="button" data-target="video-applications" data-time="94"><span>1:34</span>Zigzag line</button>
+          <button type="button" data-target="video-applications" data-time="113"><span>1:53</span>S-type curve</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section related" id="related">
+      <div class="wide">
+        <p class="eyebrow">Related projects</p>
+        <ul class="related-list">
+          <li><a href="https://compliant-fingertip.github.io/"><b>Sensorized compliant fingertip</b><span>Four curved beams with printed strain gauges sense forces, torques and slip · IDETC 2025</span></a></li>
+          <li><a href="https://force-controlled-end-effector.github.io/"><b>Force-controlled end-effector</b><span>Sensorized elastic beams in a grinding tool · T-ASE 2025</span></a></li>
+          <li><a href="https://whisker-2d-contact.github.io/"><b>Whisker-like 2-D contact sensor</b><span>One beam and three strain gauges locate a touch in a plane · TIE 2026</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a href="#paper">Paper &amp; authors ↑</a>
+  </footer>
+  <dialog id="lightbox" aria-label="Enlarged figure"><button class="close-lightbox" type="button" aria-label="Close enlarged figure">×</button><img alt=""></dialog>
+<script>
+// Shared behavior for Siyue Yao's project pages: looping clips that play only while on screen, tabs,
+// chapter buttons, links that open <details>, BibTeX copy, the figure lightbox and section highlighting.
+// No dependencies. Without JavaScript every tab panel stays visible and clips keep native controls.
+(() => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* Looping clips */
+  const loops = [...document.querySelectorAll("video.loop")];
+  const manualPause = new WeakSet();
+  const inView = new WeakSet();
+  const buttonFor = (video) => document.querySelector(`[data-video="${video.id}"]`);
+  function update(video) {
+    const button = buttonFor(video);
+    if (!button) return;
+    button.textContent = video.paused ? "Play clip" : "Pause clip";
+    button.setAttribute("aria-pressed", String(!video.paused));
+  }
+  function play(video) {
+    const promise = video.play();
+    if (promise) promise.catch(() => update(video));
+  }
+  const mayAutoplay = (video) => inView.has(video) && !manualPause.has(video) && !reduced.matches && !document.hidden;
+  loops.forEach((video) => {
+    video.muted = true;
+    video.removeAttribute("controls");
+    video.addEventListener("play", () => update(video));
+    video.addEventListener("pause", () => update(video));
+    update(video);
+    const button = buttonFor(video);
+    if (button) {
+      button.addEventListener("click", () => {
+        if (video.paused) { manualPause.delete(video); play(video); }
+        else { manualPause.add(video); video.pause(); }
+      });
+    }
+  });
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) { inView.add(target); if (mayAutoplay(target)) play(target); }
+      else { inView.delete(target); target.pause(); }
+    }), { threshold: 0.3 });
+    loops.forEach((video) => observer.observe(video));
+  }
+  const resync = () => loops.forEach((video) => {
+    if (mayAutoplay(video)) play(video);
+    else if (document.hidden || reduced.matches) video.pause();
+  });
+  document.addEventListener("visibilitychange", resync);
+  reduced.addEventListener("change", resync);
+
+  /* Full videos: only one plays at a time */
+  const fullVideos = [...document.querySelectorAll("video:not(.loop)")];
+  fullVideos.forEach((video) => video.addEventListener("play", () => {
+    fullVideos.forEach((other) => { if (other !== video) other.pause(); });
+  }));
+
+  /* Tabs */
+  document.querySelectorAll('[role="tablist"]').forEach((list) => {
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    if (!tabs.length) return;
+    const panelOf = (tab) => document.getElementById(tab.getAttribute("aria-controls"));
+    function select(selected, moveFocus = false) {
+      tabs.forEach((tab) => {
+        const active = tab === selected;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        const panel = panelOf(tab);
+        if (!panel) return;
+        panel.hidden = !active;
+        if (!active) panel.querySelectorAll("video").forEach((video) => video.pause());
+      });
+      if (moveFocus) selected.focus();
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => select(tab));
+      tab.addEventListener("keydown", (event) => {
+        const target = { ArrowRight: (index + 1) % tabs.length, ArrowLeft: (index + tabs.length - 1) % tabs.length, Home: 0, End: tabs.length - 1 }[event.key];
+        if (target === undefined) return;
+        event.preventDefault();
+        select(tabs[target], true);
+      });
+    });
+    select(tabs.find((tab) => tab.getAttribute("aria-selected") === "true") || tabs[0]);
+  });
+
+  /* Chapter buttons: <button data-target="video-id" data-time="12.4"> */
+  document.querySelectorAll("button[data-time][data-target]").forEach((button) => button.addEventListener("click", () => {
+    const video = document.getElementById(button.dataset.target);
+    if (!video) return;
+    const seek = () => { video.currentTime = Number(button.dataset.time); play(video); };
+    if (video.readyState >= 1) seek();
+    else {
+      video.addEventListener("loadedmetadata", seek, { once: true });
+      video.preload = "metadata";
+      video.load();
+    }
+    video.scrollIntoView({ block: "center", behavior: reduced.matches ? "instant" : "smooth" });
+  }));
+
+  /* Links to a <details> open it (e.g. the BibTeX button) */
+  const openDetails = (hash) => {
+    if (!hash || hash.length < 2) return;
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (target instanceof HTMLDetailsElement) target.open = true;
+  };
+  document.querySelectorAll('a[href^="#"]').forEach((link) => link.addEventListener("click", () => openDetails(link.hash)));
+  openDetails(window.location.hash);
+
+  /* BibTeX copy */
+  const copy = document.getElementById("copy-bibtex");
+  const bibtex = document.getElementById("bibtex");
+  const status = document.getElementById("citation-status");
+  if (copy && bibtex && status) {
+    copy.hidden = false;
+    copy.addEventListener("click", async () => {
+      status.textContent = "";
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("Clipboard unavailable");
+        await navigator.clipboard.writeText(`${bibtex.textContent.trim()}\n`);
+        status.textContent = "BibTeX copied to clipboard.";
+      } catch {
+        status.textContent = "Could not copy automatically. Select the BibTeX below and copy it, or download the .bib file.";
+      }
+    });
+  }
+
+  /* Figure lightbox */
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox && typeof lightbox.showModal === "function") {
+    const image = lightbox.querySelector("img");
+    document.querySelectorAll("a.zoom").forEach((link) => link.addEventListener("click", (event) => {
+      event.preventDefault();
+      image.src = link.href;
+      image.alt = link.querySelector("img")?.alt || "";
+      lightbox.showModal();
+      document.body.style.overflow = "hidden";
+    }));
+    lightbox.querySelector("button").addEventListener("click", () => lightbox.close());
+    lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
+    lightbox.addEventListener("close", () => { document.body.style.overflow = ""; });
+  }
+
+  /* Section nav highlight */
+  const navLinks = [...document.querySelectorAll(".section-nav a")];
+  if (navLinks.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      navLinks.forEach((link) => link.classList.toggle("active", link.hash === `#${entry.target.id}`));
+    }), { rootMargin: "-20% 0px -65% 0px" });
+    navLinks.forEach((link) => {
+      const section = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      if (section) observer.observe(section);
+    });
+  }
+})();
+</script>
+</body>
+</html>
